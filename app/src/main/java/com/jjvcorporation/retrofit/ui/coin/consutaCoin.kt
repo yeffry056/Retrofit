@@ -1,5 +1,7 @@
 package com.jjvcorporation.retrofit.ui.coin
 
+import android.app.ActionBar
+import android.app.Notification
 import android.text.style.BackgroundColorSpan
 import android.widget.ImageView
 import androidx.compose.foundation.Image
@@ -10,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +25,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jjvcorporation.retrofit.data.remote.dto.Coin
 import coil.compose.AsyncImage
@@ -28,26 +33,58 @@ import coil.request.ImageRequest
 
 
 @Composable
-fun CoinListScreen(
-    viewModel: CoinViewModel = hiltViewModel()
+fun ConsultaCoin(
+    viewModel: CoinViewModel = hiltViewModel(),
+     goRegistro : () ->Unit
+
 ) {
+    //viewModel.cargar()
+
     val state = viewModel.state.value
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(text = "Lista de Coins")})
+            TopAppBar(
+
+                title = {
+                    Text(text = "Lista de Coins")
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            goRegistro()
+                        }
+
+                    ) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
+
+                    }
+                }
+
+            )
+
         }
+
     ) {
-        Column(modifier = Modifier.padding(it).padding(8.dp).fillMaxSize()) {
+        Column(modifier = Modifier
+            .padding(it)
+            .padding(8.dp)
+            .fillMaxSize()) {
             LazyColumn(modifier = Modifier.fillMaxSize()){
                 items(state.coins){ coin ->
                     CoinItem(coin = coin, {})
                 }
             }
 
-            if (state.isLoading)
-                CircularProgressIndicator()
+
+
 
         }
+        Row(modifier = Modifier.width(80.dp).height(60.dp)) {
+            if (state.isLoading)
+                CircularProgressIndicator()
+        }
+
     }
 
 
@@ -92,7 +129,7 @@ fun CoinItem(
 
             }
 
-           // Text(text = coin.descripcion.orEmpty())
+            // Text(text = coin.descripcion.orEmpty())
             Text(
                 text = "$ ${coin.valor} ",
                 style = MaterialTheme.typography.body1,
@@ -116,6 +153,7 @@ fun CoinItem(
     }
 
 }
+
 
 
 @Composable
